@@ -4,8 +4,6 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { AddTaskForm } from "./components/AddTaskForm";
 import { Task } from "./components/Task";
 import axios from "axios";
-
-// Import API_URL from utils.js
 import { API_URL } from "./utils";
 
 const darkTheme = createTheme({
@@ -20,9 +18,10 @@ export default function App() {
   const fetchTasks = async () => {
     try {
       const { data } = await axios.get(API_URL);
+
       setTasks(data);
     } catch (err) {
-      console.error("Error fetching tasks:", err);
+      console.log(err);
     }
   };
 
