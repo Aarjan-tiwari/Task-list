@@ -2,36 +2,35 @@ import React, { useState } from "react";
 import { Checkbox, Typography, Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import classNames from "classnames"; // Corrected import
+import classNames from "classnames";
 import { UpdateTaskForm } from "./UpdateTaskForm";
 import axios from "axios";
 import { API_URL } from "../utils";
 
-export const Task = ({ task }) => {
-  const { id, name, completed } = task;
+export const Task = ({ task, fetchTasks }) => {
+  const { id, title, completed } = task;
   const [isComplete, setIsComplete] = useState(completed);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleUpdateTaskCompletion = async () => {
     try {
-      await axios.put(API_URL, {
-        id,
-        name,
+      await axios.put(`${API_URL}/${id}`, {
+        title,
         completed: !isComplete,
       });
       setIsComplete((prev) => !prev);
+      await fetchTasks();
     } catch (err) {
-      console.log(err);
+      console.error("Error updating task completion:", err);
     }
   };
 
   const handleDeleteTask = async () => {
     try {
-      await axios.delete(`${API_URL}/${task.id}`);
-
+      await axios.delete(`${API_URL}/${id}`);
       await fetchTasks();
     } catch (err) {
-      console.log(err);
+      console.error("Error deleting task:", err);
     }
   };
 
@@ -43,7 +42,7 @@ export const Task = ({ task }) => {
         })}
       >
         <Checkbox checked={isComplete} onChange={handleUpdateTaskCompletion} />
-        <Typography variant="h4">{name}</Typography>
+        <Typography variant="h4">{title}</Typography>
       </div>
       <div className="taskButtons">
         <Button variant="outlined" onClick={() => setIsDialogOpen(true)}>

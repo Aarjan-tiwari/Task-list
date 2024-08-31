@@ -5,13 +5,13 @@ import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import { API_URL } from "../utils";
 
-export const AddTaskForm = () => {
+export const AddTaskForm = ({ fetchTasks }) => {
   const [newTask, setNewTask] = useState("");
 
   const addNewTask = async () => {
     try {
       await axios.post(API_URL, {
-        name: newTask,
+        title: newTask, // Changed from 'name' to 'title' to match the expected API structure
         completed: false,
       });
 
@@ -19,8 +19,13 @@ export const AddTaskForm = () => {
 
       setNewTask("");
     } catch (err) {
-      console.log(err);
+      console.error("Error adding new task:", err);
     }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    addNewTask();
   };
 
   return (
@@ -28,7 +33,7 @@ export const AddTaskForm = () => {
       <Typography align="center" variant="h1" paddingTop={3} paddingBottom={3}>
         My Task List
       </Typography>
-      <div className="addTaskForm">
+      <form onSubmit={handleSubmit} className="addTaskForm">
         <TextField
           size="small"
           label="Task"
@@ -36,14 +41,10 @@ export const AddTaskForm = () => {
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}
         />
-        <Button
-          variant="outlined"
-          disabled={!newTask.length}
-          onClick={addNewTask}
-        >
+        <Button type="submit" variant="outlined" disabled={!newTask.length}>
           <AddIcon />
         </Button>
-      </div>
+      </form>
     </div>
   );
 };
