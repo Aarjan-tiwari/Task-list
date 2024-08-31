@@ -1,54 +1,55 @@
-import React, { useState } from "react";
-import { Checkbox, Typography, Button } from "@mui/material";
+import { Button, Checkbox, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import classNames from "classnames";
+import React, { useState } from "react";
 import { UpdateTaskForm } from "./UpdateTaskForm";
+import classnames from "classnames";
 import axios from "axios";
 import { API_URL } from "../utils";
 
 export const Task = ({ task, fetchTasks }) => {
-  const { id, title, completed } = task;
+  const { id, name, completed } = task;
   const [isComplete, setIsComplete] = useState(completed);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleUpdateTaskCompletion = async () => {
     try {
-      await axios.put(`${API_URL}/${id}`, {
-        title,
+      await axios.put(API_URL, {
+        id,
+        name,
         completed: !isComplete,
       });
       setIsComplete((prev) => !prev);
-      await fetchTasks();
     } catch (err) {
-      console.error("Error updating task completion:", err);
+      console.log(err);
     }
   };
 
   const handleDeleteTask = async () => {
     try {
-      await axios.delete(`${API_URL}/${id}`);
+      await axios.delete(`${API_URL}/${task.id}`);
+
       await fetchTasks();
     } catch (err) {
-      console.error("Error deleting task:", err);
+      console.log(err);
     }
   };
 
   return (
     <div className="task">
       <div
-        className={classNames("flex", {
+        className={classnames("flex", {
           done: isComplete,
         })}
       >
         <Checkbox checked={isComplete} onChange={handleUpdateTaskCompletion} />
-        <Typography variant="h4">{title}</Typography>
+        <Typography variant="h4">{name}</Typography>
       </div>
       <div className="taskButtons">
-        <Button variant="outlined" onClick={() => setIsDialogOpen(true)}>
+        <Button variant="contained" onClick={() => setIsDialogOpen(true)}>
           <EditIcon />
         </Button>
-        <Button color="error" variant="outlined" onClick={handleDeleteTask}>
+        <Button color="error" variant="contained" onClick={handleDeleteTask}>
           <DeleteIcon />
         </Button>
       </div>
